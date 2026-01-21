@@ -1,0 +1,36 @@
+#!/bin/bash
+
+
+
+if [ "$#" -eq 0 ]; then
+  echo "Scope not given, pass it as Eg: ./auto.sh target.txt (or) ./auto.sh example.com"
+  exit 1
+elif [ -f "$1" ]; then
+  FILE="$1"
+  if [ -r "$FILE" ]; then
+    echo "TARGET HAS BEEN SET: $1"
+    cat "$FILE"
+    echo "Subdomain Enumeration begins"
+    echo "Subfinder Started"
+    subfinder -dL "$FILE" -silent -o sub1
+    echo "Subfinder Completed!"
+    echo "Amass Started"
+    amass enum -passive -df "$FILE" -o amass
+    echo "Amass Completed!"
+  else
+    echo "Couldn't read scope file - Permission Issue"
+    exit 1
+  fi
+else 
+  DOMAIN="$1"
+  echo "Treat input as a single scope value"
+  echo "TARGET HAS BEEN SET"
+  echo "$1"
+  echo "Subdomain Enumeration begins"
+  echo "Subfinder Started"
+  subfinder -d "$DOMAIN" -silent -o sub1
+  echo "Subfinder Completed!"
+  echo "Amass Started"
+  amass enum -passive -d "$DOMAIN" -o amass
+  echo "Amass Completed!"
+fi
